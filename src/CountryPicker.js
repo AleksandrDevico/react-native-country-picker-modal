@@ -1,25 +1,19 @@
-// @flow
-/* eslint import/newline-after-import: 0 */
-
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import SafeAreaView from 'react-native-safe-area-view'
-
 import {
-  StyleSheet,
-  View,
   Image,
-  TouchableOpacity,
+  ListView,
   Modal,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
   Text,
   TextInput,
-  ListView,
-  ScrollView,
-  Platform
+  TouchableOpacity,
+  View,
 } from 'react-native'
-
 import Fuse from 'fuse.js'
-
 import cca2List from '../data/cca2'
 import { getHeightPercent } from './ratio'
 import CloseButton from './CloseButton'
@@ -55,8 +49,9 @@ const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
 
 setCountries()
 
-export const getAllCountries = () =>
-  cca2List.map(cca2 => ({ ...countries[cca2], cca2 }))
+export const getAllCountries = () => cca2List.map(cca2 =>
+  ({ ...countries[cca2], cca2 })
+)
 
 export default class CountryPicker extends Component {
   static propTypes = {
@@ -123,6 +118,13 @@ export default class CountryPicker extends Component {
       </View>
     )
   }
+
+  openModal = this.openModal.bind(this)
+
+  // dimensions of country list and window
+  itemHeight = getHeightPercent(7)
+
+  listHeight = countries.length * this.itemHeight
 
   constructor(props) {
     super(props)
@@ -202,29 +204,30 @@ export default class CountryPicker extends Component {
   }
 
   onSelectCountry(cca2) {
-    this.setState({
+    this.setState(state => ({
       modalVisible: false,
       filter: '',
-      dataSource: ds.cloneWithRows(this.state.cca2List)
-    })
-
-    this.props.onChange({
-      cca2,
-      ...countries[cca2],
-      flag: undefined,
-      name: this.getCountryName(countries[cca2])
+      dataSource: ds.cloneWithRows(state.cca2List)
+    }), () => {
+      this.props.onChange({
+        cca2,
+        ...countries[cca2],
+        flag: undefined,
+        name: this.getCountryName(countries[cca2])
+      })
     })
   }
 
   onClose = () => {
-    this.setState({
+    this.setState(state => ({
       modalVisible: false,
       filter: '',
-      dataSource: ds.cloneWithRows(this.state.cca2List)
+      dataSource: ds.cloneWithRows(state.cca2List)
+    }), () => {
+      if (this.props.onClose) {
+        this.props.onClose()
+      }
     })
-    if (this.props.onClose) {
-      this.props.onClose()
-    }
   }
 
   getCountryName(country, optionalTranslation) {
@@ -250,14 +253,17 @@ export default class CountryPicker extends Component {
     ).sort()
   }
 
-  openModal = this.openModal.bind(this)
+  handleFilterChange = value => {
+    const filteredCountries = value === ''
+      ? this.state.cca2List
+      : this.fuse.search(value)
 
-  // dimensions of country list and window
-  itemHeight = getHeightPercent(7)
-  listHeight = countries.length * this.itemHeight
+    this._listView.scrollTo({ y: 0 })
 
-  openModal() {
-    this.setState({ modalVisible: true })
+    this.setState(() => ({
+      filter: value,
+      dataSource: ds.cloneWithRows(filteredCountries)
+    }))
   }
 
   scrollTo(letter) {
@@ -281,16 +287,8 @@ export default class CountryPicker extends Component {
     })
   }
 
-  handleFilterChange = value => {
-    const filteredCountries =
-      value === '' ? this.state.cca2List : this.fuse.search(value)
-
-    this._listView.scrollTo({ y: 0 })
-
-    this.setState({
-      filter: value,
-      dataSource: ds.cloneWithRows(filteredCountries)
-    })
+  openModal() {
+    this.setState({ modalVisible: true })
   }
 
   renderCountry(country, index) {
@@ -329,9 +327,9 @@ export default class CountryPicker extends Component {
         <View style={styles.itemCountryName}>
           <Text style={styles.countryName} allowFontScaling={false}>
             {this.getCountryName(country)}
-            {this.props.showCallingCode &&
-            country.callingCode &&
-            <Text>{` (+${country.callingCode})`}</Text>}
+            {this.props.showCallingCode && country.callingCode &&
+              <Text>{` (+${country.callingCode})`}</Text>
+            }
           </Text>
         </View>
       </View>
@@ -347,8 +345,10 @@ export default class CountryPicker extends Component {
     } = this.props
 
     const value = this.state.filter
-    const onChange = this.handleFilterChange
-    const onClose = this.onClose
+    const {
+      handleFilterChange: onChange,
+      onClose
+    } = this
 
     return renderFilter ? (
       renderFilter({ value, onChange, onClose })
@@ -373,9 +373,7 @@ export default class CountryPicker extends Component {
           onPress={() => this.setState({ modalVisible: true })}
           activeOpacity={0.7}
         >
-          {this.props.children ? (
-            this.props.children
-          ) : (
+          {this.props.children ? this.props.children : (
             <View
               style={[styles.touchFlag, { marginTop: isEmojiable ? 0 : 5 }]}
             >
@@ -425,7 +423,8 @@ export default class CountryPicker extends Component {
                     {this.state.filter === '' &&
                       this.state.letters.map((letter, index) =>
                         this.renderLetters(letter, index)
-                      )}
+                      )
+                    }
                   </ScrollView>
                 )}
               </View>
