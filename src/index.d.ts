@@ -1,4 +1,10 @@
-import { StyleProp, ViewStyle, ImageProps } from 'react-native';
+import {
+  ImageProps,
+  ImageStyle,
+  StyleProp,
+  TextStyle,
+  ViewStyle,
+} from 'react-native';
 import * as React from 'react';
 
 /**
@@ -10,6 +16,27 @@ export interface Country {
   callingCode: CallingCode;
   flag: string;
   name: { [key in TranslationLanguageCode]: string };
+}
+
+export interface CountryPickerStyles {
+  closeButton?: StyleProp<ViewStyle>;
+  closeButtonImage?: StyleProp<ImageStyle>;
+  container?: StyleProp<ViewStyle>;
+  contentContainer?: StyleProp<ViewStyle>;
+  countryName?: StyleProp<TextStyle>;
+  emojiFlag?: StyleProp<TextStyle>;
+  header?: StyleProp<ViewStyle>;
+  imgStyle?: StyleProp<ImageStyle>;
+  input?: StyleProp<TextStyle>;
+  inputOnly?: StyleProp<TextStyle>;
+  itemCountry?: StyleProp<ViewStyle>;
+  itemCountryFlag?: StyleProp<ViewStyle>;
+  itemCountryName?: StyleProp<ViewStyle>;
+  letter?: StyleProp<ViewStyle>;
+  letters?: StyleProp<ViewStyle>;
+  letterText?: StyleProp<TextStyle>;
+  modalContainer?: StyleProp<ViewStyle>;
+  touchFlag?: StyleProp<ViewStyle>;
 }
 
 /**
@@ -304,6 +331,10 @@ export enum AnimationType {
   NONE = 'none'
 }
 
+export interface SelectedCountry extends Country {
+  cca2: CCA2Code
+}
+
 export interface CountryPickerProps {
   /**
    * Country code, as specified in ISO 3166-1 alpha-2 (ie. `FR`, `US`, etc.)
@@ -312,11 +343,11 @@ export interface CountryPickerProps {
   /**
    * The handler when a country is selected
    */
-  onChange: (value: Country) => void;
+  onChange: (value: SelectedCountry) => void;
   /**
    * Override any style specified in the component (see source code)
    */
-  styles?: StyleProp<ViewStyle>;
+  styles?: CountryPickerStyles;
   /**
    * If set to true, Country Picker List will show calling code after country name. For example: `United States (+1)`
    */
