@@ -33,6 +33,8 @@ export interface CountryPickerStyles {
   itemCountry?: StyleProp<ViewStyle>;
   itemCountryFlag?: StyleProp<ViewStyle>;
   itemCountryName?: StyleProp<ViewStyle>;
+  keyboardView?: StyleProp<ViewStyle>;
+  keyboardViewContent?: StyleProp<ViewStyle>;
   letter?: StyleProp<ViewStyle>;
   letters?: StyleProp<ViewStyle>;
   letterText?: StyleProp<TextStyle>;

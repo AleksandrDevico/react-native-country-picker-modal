@@ -298,19 +298,18 @@ export default class CountryPicker extends Component {
         key={index}
         onStartShouldSetResponder={() => true}
         onResponderRelease={() => this.onSelectCountry(cca2)}
+        style={styles.itemCountry}
       >
-        <View style={styles.itemCountry}>
-          {CountryPicker.renderFlag(cca2)}
-          <View style={styles.itemCountryName}>
-            <Text style={styles.countryName} allowFontScaling={false}>
-              {this.getCountryName(country)}
-              {this.props.showCallingCode && country.callingCode &&
-                <Text style={styles.callingCode}>
-                  {` (+${country.callingCode})`}
-                </Text>
-              }
-            </Text>
-          </View>
+        {CountryPicker.renderFlag(cca2)}
+        <View style={styles.itemCountryName}>
+          <Text style={styles.countryName} allowFontScaling={false}>
+            {this.getCountryName(country)}
+            {this.props.showCallingCode && country.callingCode &&
+              <Text style={styles.callingCode}>
+                {` (+${country.callingCode})`}
+              </Text>
+            }
+          </Text>
         </View>
       </View>
     )
@@ -397,7 +396,11 @@ export default class CountryPicker extends Component {
               )}
               {this.props.filterable && this.renderFilter()}
             </View>
-            <KeyboardAvoidingView behavior="padding">
+            <KeyboardAvoidingView
+              behavior="padding"
+              contentContainerStyle={styles.keyboardViewContent}
+              style={styles.keyboardView}
+            >
               <View style={styles.contentContainer}>
                 <ListView
                   keyboardShouldPersistTaps="always"
