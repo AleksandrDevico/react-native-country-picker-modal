@@ -8,6 +8,31 @@ import {
 } from 'react-native'
 import PropTypes from 'prop-types'
 
+const CloseButtonAndroid = (props, closeImage) => (
+  <View style={props.styles[0]}>
+    <TouchableNativeFeedback
+      background={
+        Platform.Version < 21
+          ? TouchableNativeFeedback.SelectableBackground()
+          : TouchableNativeFeedback.SelectableBackgroundBorderless()
+      }
+      onPress={props.onPress}
+    >
+      <View>
+        <Image source={closeImage} style={props.styles[1]} />
+      </View>
+    </TouchableNativeFeedback>
+  </View>
+)
+
+const CloseButtonDefault = (props, closeImage) => (
+  <View style={props.styles[0]}>
+    <TouchableOpacity onPress={props.onPress}>
+      <Image source={closeImage} style={props.styles[1]} />
+    </TouchableOpacity>
+  </View>
+)
+
 const CloseButton = props => {
   const closeImage = props.closeImage
     ? props.closeImage
@@ -17,29 +42,8 @@ const CloseButton = props => {
     })
 
   return Platform.select({
-    android: (props, closeImage) => (
-      <View style={props.styles[0]}>
-        <TouchableNativeFeedback
-          background={
-            Platform.Version < 21
-              ? TouchableNativeFeedback.SelectableBackground()
-              : TouchableNativeFeedback.SelectableBackgroundBorderless()
-          }
-          onPress={props.onPress}
-        >
-          <View>
-            <Image source={closeImage} style={props.styles[1]} />
-          </View>
-        </TouchableNativeFeedback>
-      </View>
-    ),
-    default: (props, closeImage) => (
-      <View style={props.styles[0]}>
-        <TouchableOpacity onPress={props.onPress}>
-          <Image source={closeImage} style={props.styles[1]} />
-        </TouchableOpacity>
-      </View>
-    )
+    android: <CloseButtonAndroid {...props} closeImage={closeImage} />,
+    default: <CloseButtonDefault {...props} closeImage={closeImage} />
   })
 }
 
@@ -48,5 +52,8 @@ CloseButton.propTypes = {
   onPress: PropTypes.func,
   image: PropTypes.any
 }
+
+CloseButtonAndroid.propTypes = CloseButton.propTypes
+CloseButtonDefault.propTypes = CloseButton.propTypes
 
 export default CloseButton
