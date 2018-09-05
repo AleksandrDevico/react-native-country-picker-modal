@@ -19,6 +19,7 @@ export interface Country {
 }
 
 export interface CountryPickerStyles {
+  callingCode?: StyleProp<TextStyle>;
   closeButton?: StyleProp<ViewStyle>;
   closeButtonImage?: StyleProp<ImageStyle>;
   container?: StyleProp<ViewStyle>;
@@ -35,6 +36,7 @@ export interface CountryPickerStyles {
   letter?: StyleProp<ViewStyle>;
   letters?: StyleProp<ViewStyle>;
   letterText?: StyleProp<TextStyle>;
+  listView?: StyleProp<ViewStyle>;
   modalContainer?: StyleProp<ViewStyle>;
   touchFlag?: StyleProp<ViewStyle>;
 }

@@ -291,15 +291,28 @@ export default class CountryPicker extends Component {
     this.setState({ modalVisible: true })
   }
 
-  renderCountry(country, index) {
+  renderCountry(cca2, index) {
+    const country = countries[cca2]
     return (
-      <TouchableOpacity
+      <View
         key={index}
-        onPress={() => this.onSelectCountry(country)}
-        activeOpacity={0.99}
+        onStartShouldSetResponder={() => true}
+        onResponderRelease={() => this.onSelectCountry(cca2)}
       >
-        {this.renderCountryDetail(country)}
-      </TouchableOpacity>
+        <View style={styles.itemCountry}>
+          {CountryPicker.renderFlag(cca2)}
+          <View style={styles.itemCountryName}>
+            <Text style={styles.countryName} allowFontScaling={false}>
+              {this.getCountryName(country)}
+              {this.props.showCallingCode && country.callingCode &&
+                <Text style={styles.callingCode}>
+                  {` (+${country.callingCode})`}
+                </Text>
+              }
+            </Text>
+          </View>
+        </View>
+      </View>
     )
   }
 
@@ -316,23 +329,6 @@ export default class CountryPicker extends Component {
           </Text>
         </View>
       </TouchableOpacity>
-    )
-  }
-
-  renderCountryDetail(cca2) {
-    const country = countries[cca2]
-    return (
-      <View style={styles.itemCountry}>
-        {CountryPicker.renderFlag(cca2)}
-        <View style={styles.itemCountryName}>
-          <Text style={styles.countryName} allowFontScaling={false}>
-            {this.getCountryName(country)}
-            {this.props.showCallingCode && country.callingCode &&
-              <Text>{` (+${country.callingCode})`}</Text>
-            }
-          </Text>
-        </View>
-      </View>
     )
   }
 
@@ -414,6 +410,7 @@ export default class CountryPicker extends Component {
                   onLayout={({ nativeEvent: { layout: { y: offset } } }) =>
                     this.setVisibleListHeight(offset)
                   }
+                  style={styles.listView}
                 />
                 {!this.props.hideAlphabetFilter && (
                   <ScrollView
