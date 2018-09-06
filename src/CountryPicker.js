@@ -7,7 +7,6 @@ import {
   Platform,
   SafeAreaView,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -86,6 +85,7 @@ export default class CountryPicker extends Component {
     excludeCountries: [],
     filterPlaceholder: 'Filter',
     autoFocusFilter: true,
+    styles: {},
     transparent: false,
     animationType: 'none'
   }
@@ -160,17 +160,7 @@ export default class CountryPicker extends Component {
       letters: this.getLetters(countryList)
     }
 
-    if (this.props.styles) {
-      Object.keys(countryPickerStyles).forEach(key => {
-        styles[key] = StyleSheet.flatten([
-          countryPickerStyles[key],
-          this.props.styles[key]
-        ])
-      })
-      styles = StyleSheet.create(styles)
-    } else {
-      styles = countryPickerStyles
-    }
+    styles = countryPickerStyles
 
     const options = Object.assign({
       shouldSort: true,
@@ -298,14 +288,14 @@ export default class CountryPicker extends Component {
         key={index}
         onStartShouldSetResponder={() => true}
         onResponderRelease={() => this.onSelectCountry(cca2)}
-        style={styles.itemCountry}
+        style={[styles.itemCountry, this.props.styles.itemCountry]}
       >
         {CountryPicker.renderFlag(cca2)}
-        <View style={styles.itemCountryName}>
+        <View style={[styles.itemCountryName, this.props.styles.itemCountryName]}>
           <Text style={styles.countryName} allowFontScaling={false}>
             {this.getCountryName(country)}
             {this.props.showCallingCode && country.callingCode &&
-              <Text style={styles.callingCode}>
+              <Text style={[styles.callingCode, this.props.styles.callingCode]}>
                 {` (+${country.callingCode})`}
               </Text>
             }
@@ -322,8 +312,8 @@ export default class CountryPicker extends Component {
         onPress={() => this.scrollTo(letter)}
         activeOpacity={0.6}
       >
-        <View style={styles.letter}>
-          <Text style={styles.letterText} allowFontScaling={false}>
+        <View style={[styles.letter, this.props.styles.letter]}>
+          <Text style={[styles.letterText, this.props.styles.letterText]} allowFontScaling={false}>
             {letter}
           </Text>
         </View>
@@ -353,7 +343,12 @@ export default class CountryPicker extends Component {
         autoCorrect={false}
         placeholder={filterPlaceholder}
         placeholderTextColor={filterPlaceholderTextColor}
-        style={[styles.input, !this.props.closeable && styles.inputOnly]}
+        style={[
+          styles.input,
+          this.props.styles.input,
+          !this.props.closeable && styles.inputOnly,
+          !this.props.closeable && this.props.styles.inputOnly
+        ]}
         onChangeText={onChange}
         value={value}
       />
@@ -362,7 +357,7 @@ export default class CountryPicker extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, this.props.styles.container]}>
         <TouchableOpacity
           disabled={this.props.disabled}
           onPress={() => this.setState({ modalVisible: true })}
@@ -370,12 +365,16 @@ export default class CountryPicker extends Component {
         >
           {this.props.children ? this.props.children : (
             <View
-              style={[styles.touchFlag, { marginTop: isEmojiable ? 0 : 5 }]}
+              style={[
+                styles.touchFlag,
+                this.props.styles.touchFlag,
+                { marginTop: isEmojiable ? 0 : 5 }
+              ]}
             >
               {CountryPicker.renderFlag(this.props.cca2,
-                styles.itemCountryFlag,
-                styles.emojiFlag,
-                styles.imgStyle)}
+                { ...styles.itemCountryFlag, ...this.props.styles.itemCountryFlag },
+                { ...styles.emojiFlag, ...this.props.styles.emojiFlag },
+                { ...styles.imgStyle, ...this.props.styles.imgStyle })}
             </View>
           )}
         </TouchableOpacity>
@@ -385,12 +384,15 @@ export default class CountryPicker extends Component {
           visible={this.state.modalVisible}
           onRequestClose={() => this.setState({ modalVisible: false })}
         >
-          <SafeAreaView style={styles.modalContainer}>
-            <View style={styles.header}>
+          <SafeAreaView style={[styles.modalContainer, this.props.styles.modalContainer]}>
+            <View style={[styles.header, this.props.styles.header]}>
               {this.props.closeable && (
                 <CloseButton
                   image={this.props.closeButtonImage}
-                  styles={[styles.closeButton, styles.closeButtonImage]}
+                  styles={[
+                    [styles.closeButton, this.props.styles.closeButton],
+                    [styles.closeButtonImage, this.props.styles.closeButtonImage]
+                  ]}
                   onPress={() => this.onClose()}
                 />
               )}
@@ -398,10 +400,13 @@ export default class CountryPicker extends Component {
             </View>
             <KeyboardAvoidingView
               behavior="padding"
-              contentContainerStyle={styles.keyboardViewContent}
-              style={styles.keyboardView}
+              contentContainerStyle={[
+                styles.keyboardViewContent,
+                this.props.styles.keyboardViewContent
+              ]}
+              style={[styles.keyboardView, this.props.styles.keyboardView]}
             >
-              <View style={styles.contentContainer}>
+              <View style={[styles.contentContainer, this.props.styles.contentContainer]}>
                 <ListView
                   keyboardShouldPersistTaps="always"
                   enableEmptySections
@@ -413,11 +418,11 @@ export default class CountryPicker extends Component {
                   onLayout={({ nativeEvent: { layout: { y: offset } } }) =>
                     this.setVisibleListHeight(offset)
                   }
-                  style={styles.listView}
+                  style={[styles.listView, this.props.styles.listView]}
                 />
                 {!this.props.hideAlphabetFilter && (
                   <ScrollView
-                    contentContainerStyle={styles.letters}
+                    contentContainerStyle={[styles.letters, this.props.styles.letters]}
                     keyboardShouldPersistTaps="always"
                   >
                     {this.state.filter === '' &&

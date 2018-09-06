@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 import PropTypes from 'prop-types'
 
-const CloseButtonAndroid = (props, closeImage) => (
+const CloseButtonAndroid = (props) => (
   <View style={props.styles[0]}>
     <TouchableNativeFeedback
       background={
@@ -19,31 +19,31 @@ const CloseButtonAndroid = (props, closeImage) => (
       onPress={props.onPress}
     >
       <View>
-        <Image source={closeImage} style={props.styles[1]} />
+        <Image source={props.image} style={props.styles[1]} />
       </View>
     </TouchableNativeFeedback>
   </View>
 )
 
-const CloseButtonDefault = (props, closeImage) => (
+const CloseButtonDefault = (props) => (
   <View style={props.styles[0]}>
     <TouchableOpacity onPress={props.onPress}>
-      <Image source={closeImage} style={props.styles[1]} />
+      <Image source={props.image} style={props.styles[1]} />
     </TouchableOpacity>
   </View>
 )
 
 const CloseButton = props => {
-  const closeImage = props.closeImage
-    ? props.closeImage
+  const closeImage = props.image
+    ? props.image
     : Platform.select({
       android: require('./android-close.png'),
       default: require('./ios7-close-empty.png')
     })
 
   return Platform.select({
-    android: <CloseButtonAndroid {...props} closeImage={closeImage} />,
-    default: <CloseButtonDefault {...props} closeImage={closeImage} />
+    android: <CloseButtonAndroid {...props} image={closeImage} />,
+    default: <CloseButtonDefault {...props} image={closeImage} />
   })
 }
 
